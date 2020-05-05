@@ -1,15 +1,30 @@
-const express = require('express')
-const cors=require('cors')
-const mongoose=require('mongoose')
-const app = express()
-const port = 8000
 
-mongoose.connect('mongodb+srv://react-blog:masum143@react-blog-xhh8w.mongodb.net/test?retryWrites=true&w=majority',{useNewUrlParser:true
-}).then(()=> console.log("Mongo DB connected") )
-    .catch(err=> console.log(err));
+const express = require('express');
+const app = express();
+const bodyParser=require('body-parser');
+const cookieParser=require('cookie-parser');
+const port = 8889
 
+//DB Connection  File
+require('./DB/index');
 
-//mongodb url mongodb+srv://react-blog:<password>@react-blog-xhh8w.mongodb.net/test?retryWrites=true&w=majority
+//import models
+const User=require('./models/user')
+
+app.use(bodyParser.urlencoded({extended:true}))
+app.use(bodyParser.json())
+app.use(cookieParser())
+
+app.post('/api/user/register',(req,res)=>{
+    const user=new User(req.body)
+
+    user.save((err,user)=>{
+        if (err) return res.json({success:false,err})
+        return res.status(200).json({success:true})
+    });
+
+})
+
 
 
 app.get('/', (req, res) => {
